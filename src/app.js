@@ -19,6 +19,6 @@ import clientRouter from "../src/routes/clients.route.js"
 
 // routes declaration
 
-app.use("/", clientRouter)
+app.use("/api/v1/clients", clientRouter)
 
 export {app}
