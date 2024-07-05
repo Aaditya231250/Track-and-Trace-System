@@ -3,6 +3,7 @@ import { registerUser } from "../controllers/clients.controller.js";
 
 const router = Router()
 
-router.post("/register", registerUser)
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:3672697067.
+router.route("/").get(registerUser)
 
 export default router

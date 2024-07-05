@@ -37,7 +37,7 @@ const registerUser = asyncHandler(async (req, res)=>{
         phone,
         address,
         segment,
-        refreshToken
+        //refreshToken
     })
 
     const createdUser = await Client.findbyId(user._id).select("- password -refreshToken")
@@ -49,6 +49,7 @@ const registerUser = asyncHandler(async (req, res)=>{
     return res.status(201).json(
         new ApiResponse(200, createdUser, "User registered Successfully")
     )
+    
 })
 
-export {registerUser}
+export { registerUser }
