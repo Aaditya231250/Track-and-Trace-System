@@ -52,4 +52,40 @@ const registerUser = asyncHandler(async (req, res)=>{
     
 })
 
-export { registerUser }
+const loginUser = asyncHandler(async (req, res)=>{
+
+    const {email, password} = req.body
+
+    if ([email, password].some((field) => field?.trim() === "")) {
+        throw new APIError(400, "All fields are required")
+    }
+    
+    const user = await user.findOne({email})
+
+    if(!user){
+        throw new APIError(404, "User not found")
+    }
+
+    const isPasswordValid = user.matchPassword(password)
+
+    if(!isPasswordValid){
+        throw new APIError(401, "Invalid credentials")
+    }
+
+    const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .cookie("AccessToken", accessToken, options)
+    .cookie("AccessToken", accessToken, options)
+    .json(new APIError(201, "User logged in Successfully"))
+    
+ 
+});
+
+export { registerUser, loginUser }
