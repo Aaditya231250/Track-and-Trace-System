@@ -2,23 +2,22 @@ import { APIError } from "../utils/APIError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import jwt from "jsonwebtoken";
 import { Client } from "../models/clients.models.js";
+import mongoose from "mongoose";
 
-export const verifyJWT = asyncHandler(async(req, next) =>{
+export const verifyJWT = asyncHandler(async(req, res, next) =>{
     try {
-        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer", "").trim()
+        const token = req.cookies?.AccessToken || req.header("Authorization")?.replace("Bearer ", "")
 
         if(!token){
             APIError(401, "Unauthorized request")
         }
 
-        const decoded_token = await jwt.verify(token, process.env.ACCESS_TOKEN_CODE)
+        const decoded_token = jwt.verify(token, process.env.ACCESS_TOKEN_CODE);
 
-        console.log(decoded_token)
-
-        const user = await Client.findByID(decoded_token?._id).select("-password -refreshToken")
+        const user = await Client.findOne({_id : decoded_token._id}).select("-password -refreshToken")
 
         if(!user){
-            throw new APIError(400, "Invalid Access Token")
+            throw new APIError(400, "Invalid Accesss Token")
         }
 
         req.user = user

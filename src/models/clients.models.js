@@ -64,7 +64,7 @@ clientsSchema.methods.generateAccessToken = function(){
 clientsSchema.methods.generateRefreshToken = function(){
     return jwt.sign(
         {
-            _id: this.id,
+            _id: this._id,
         },
         process.env.REFRESH_TOKEN_CODE,
         {

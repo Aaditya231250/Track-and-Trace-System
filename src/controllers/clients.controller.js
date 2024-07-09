@@ -77,6 +77,8 @@ const loginUser = asyncHandler(async (req, res)=>{
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
 
+    const loggedinUser = await Client.findById(user._id).select("-password -refreshToken")
+
     const options = {
         httpOnly: true,
         secure: true
@@ -88,7 +90,7 @@ const loginUser = asyncHandler(async (req, res)=>{
     .cookie("RefreshToken", refreshToken, options)
     .json(new APIError(201, 
         {
-            user_log : user, accessToken, refreshToken
+            user : loggedinUser, accessToken, refreshToken
         },
         "User logged in Successfully", 
         [])) 
