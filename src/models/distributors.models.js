@@ -13,12 +13,11 @@ const distributorSchema = new mongoose.Schema({
     password: {
         type : String,
         required : true,
-        unique : true
+        unique : false
     },
     phone: {
         type : String,
         required : true,
-        unique : true
     },
     address: {
         type : String,

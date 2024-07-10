@@ -96,9 +96,30 @@ const loginClient = asyncHandler(async (req, res)=>{
         [])) 
 });
 
+
 const logoutClient = asyncHandler(async (req, res)=>{
-    
-    c
+    await Client.findByIdAndUpdate(
+        req.user._id, 
+        {
+            $unset : {
+                refreshToken : 1
+            }
+        },
+        {
+            new : true
+        }
+    )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("AccessToken", options)
+    .clearCookie("RefreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged Out"))
 })
 
 

@@ -5,7 +5,7 @@ const relationSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId, 
         ref: 'Product' 
     },
-    distrbutors_id: [{
+    distrbutor_id: [{
         type: Schema.Types.ObjectId, 
         ref: 'Distributor',
     }],
@@ -20,3 +20,6 @@ const relationSchema = new mongoose.Schema({
 }, {timestamps:true}
 )
 
+const Relation = mongoose.model('Relation', relationSchema)
+
+export { Relation }
