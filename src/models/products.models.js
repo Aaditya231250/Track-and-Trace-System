@@ -1,32 +1,19 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    name : {
+    Product : {
         type : String,
         required : true,
     },
-    price : {
-        type : Number,
-        required : true,
-    },
-    company : {
-        type : String,
-        required : true
-    },
-    segment : {
+    Details : {
         type : String,
         required : true,
     },
-    match_percentage : {
-        type : Number,
-        required : true
-    },
-    barcode_data : {
+    Barcode_Data : {
         type : String,
         required : true,
-    },
-
-})
+    }
+}, {timestamps:true})
 
 const Product = mongoose.model('Product', productSchema);
 

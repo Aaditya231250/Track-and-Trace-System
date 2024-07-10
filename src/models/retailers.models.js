@@ -10,14 +10,6 @@ const retailerSchema = new mongoose.Schema({
         required : true,
         unique : true,
     },
-    parent_ref_id : {
-        type : Schema.Types.ObjectId,
-        ref : 'Distributor'
-    },
-    level : {
-        level_no : Number,
-        
-    },
     password: {
         type : String,
         required : true,
@@ -35,4 +27,6 @@ const retailerSchema = new mongoose.Schema({
 }, 
 {timestamps: true})
 
-module.exports = mongoose.Model('Retailer', retailerSchema)
+const Retailer = mongoose.Model('Retailer', retailerSchema)
+
+export { Retailer }

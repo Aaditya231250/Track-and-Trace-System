@@ -1,11 +1,11 @@
-import { asyncHandler } from "../utils/AsyncHandler.js"
-import { APIError} from "../utils/APIError.js"
-import { Client } from "../models/clients.models.js"
-import { ApiResponse } from "../utils/APIResponse.js"
+import { asyncHandler } from "../utils/AsyncHandler.js";
+import { APIError } from "../utils/APIError.js";
+import { Retailer } from "../models/retailers.models.js";
+import { ApiResponse } from "../utils/APIResponse.js";
 
 const generateAccessAndRefreshTokens = async(userId)=>{
     try{
-        const user = await Client.findById(userId)
+        const user = await Retailer.findById(userId)
         const accessToken =  user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
         user.refreshToken = refreshToken
@@ -16,54 +16,52 @@ const generateAccessAndRefreshTokens = async(userId)=>{
     }
 }
 
-const registerClient = asyncHandler(async (req, res)=>{
-    const {name, email, password, phone, address, segment} = req.body
+const registerRetailer = asyncHandler(async (req, res)=>{
+    
+    const {name, email, password, phone, address} = req.body
 
     if (
-        [name, email, password, phone, address, segment].some((field) => field?.trim() === "")
+        [name, email, password, phone, address].some((field) => field?.trim() === "")
     ) {
         throw new APIError(400, "All fields are required")
     }
 
-    const userExisted = await Client.findOne({ email })
+    const userExisted = await Retailer.findOne({ email })
     if (userExisted) {
         throw new APIError(409, "User already exists")
     }
 
-    const user = await Client.create({
+    const user = await Retailer.create({
         name,
         email,
         password,
         phone,
         address,
-        segment,
         //refreshToken
     })
 
-    if (user && user._id) { // Check if user and user._id exist
-        const createdUser = await Client.findById(user._id).select("-password -refreshToken");
+    if(user && user._id){
+        const createdUser = await Retailer.findById(user._id).select("-password -refreshToken");
         if (!createdUser) {
             throw new APIError(500, "Something went wrong while registering the user");
         }
         return res.status(201).json(
             new ApiResponse(200, createdUser, "User registered Successfully")
         );
-    } else {
-        // Handle the case where user creation failed
-        throw new APIError(500, "Failed to create user"); 
     }
-    
+    else{
+        throw new APIError(500, "Failed to create User")
+    }
 })
 
-const loginClient = asyncHandler(async (req, res)=>{
-
+const loginRetailer = asyncHandler(async (req, res)=>{
     const {email, password} = req.body
 
     if ([email, password].some((field) => field?.trim() === "")) {
         throw new APIError(400, "All fields are required")
     }
-    
-    const user = await Client.findOne({email})
+
+    const user = await Retailer.findOne({email})
 
     if(!user){
         throw new APIError(404, "User not found")
@@ -77,7 +75,7 @@ const loginClient = asyncHandler(async (req, res)=>{
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id)
 
-    const loggedinUser = await Client.findById(user._id).select("-password -refreshToken")
+    const loggedinUser = await Retailer.findById(user._id).select("-password -refreshToken")
 
     const options = {
         httpOnly: true,
@@ -94,12 +92,33 @@ const loginClient = asyncHandler(async (req, res)=>{
         },
         "User logged in Successfully", 
         [])) 
-});
 
-const logoutClient = asyncHandler(async (req, res)=>{
-    
-    c
+})
+
+const logoutRetailer = asyncHandler(async (req, res)=>{
+    await Retailer.findByIdAndUpdate(
+        req.user._id, 
+        {
+            $unset : {
+                refreshToken : 1
+            }
+        },
+        {
+            new : true
+        }
+    )
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+    .status(200)
+    .clearCookie("AccessToken", options)
+    .clearCookie("RefreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged Out"))
 })
 
 
-export { registerClient, loginClient, logoutClient }
+export { registerRetailer, loginRetailer, logoutRetailer}

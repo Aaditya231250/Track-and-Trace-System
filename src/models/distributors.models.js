@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
 const distributorSchema = new mongoose.Schema({
     name: {
@@ -7,12 +7,6 @@ const distributorSchema = new mongoose.Schema({
     },
     email: {
         type : String,
-        required : true,
-        unique : true,
-    },
-    client_ref: {
-        type : Schema.Types.ObjectId,
-        ref : 'Client',
         required : true,
         unique : true,
     },
@@ -29,8 +23,14 @@ const distributorSchema = new mongoose.Schema({
     address: {
         type : String,
         required : true,
+    },
+    refreshToken: {
+        type : String,
     }
 }, 
 {timestamps: true})
 
-module.exports = mongoose.Model('Distibutor', distributorSchema)
+const Distributor = mongoose.model('Distributor', distributorSchema)
+
+export { Distributor }
+
