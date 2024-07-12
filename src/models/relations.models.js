@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import { Schema } from "mongoose";
 
 const relationSchema = new mongoose.Schema({
     product_id: {
         type: Schema.Types.ObjectId, 
         ref: 'Product' 
     },
-    distrbutor_id: [{
+    distributor_id: [{
         type: Schema.Types.ObjectId, 
         ref: 'Distributor',
     }],

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const retailerSchema = new mongoose.Schema({
     name: {
@@ -17,15 +18,23 @@ const retailerSchema = new mongoose.Schema({
     phone: {
         type : String,
         required : true,
-        unique : true
     },
     address: {
         type : String,
         required : true,
+    },
+    refreshToken: {
+        type: String
     }
 }, 
 {timestamps: true})
 
-const Retailer = mongoose.Model('Retailer', retailerSchema)
+retailerSchema.pre('save', async function(next){
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
+    next()
+}) 
+
+const Retailer = mongoose.model('Retailer', retailerSchema)
 
 export { Retailer }

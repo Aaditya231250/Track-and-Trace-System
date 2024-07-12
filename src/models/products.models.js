@@ -1,17 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    Product : {
+    name : {
         type : String,
         required : true,
     },
-    Details : {
+    details : {
         type : String,
-        required : true,
     },
-    Barcode_Data : {
+    barcode_data : {
         type : String,
-        required : true,
     }
 }, {timestamps:true})
 
